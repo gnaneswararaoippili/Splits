@@ -48,4 +48,4 @@ jobs:
           context: .
           file: ./docker-compose.yml
           push: true
-          tags: gnaneswar1/my-fullstack-app:latest
+          tags: gnaneswar1/splits:latest
