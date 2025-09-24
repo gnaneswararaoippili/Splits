@@ -1,0 +1,19 @@
+# Ignore MySQL data
+data/
+*.sock
+*.pid
+*.log
+
+# Ignore node modules
+node_modules/
+
+# Ignore build outputs
+frontend/build/
+backend/target/
+
+# Ignore IDE/OS files
+*.iml
+*.class
+*.DS_Store
+*.idea/
+.vscode/
