@@ -1,5 +1,4 @@
 name: Fullstack CI/CD
-
 on:
   push:
     branches: [ "main" ]
@@ -7,31 +6,46 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    # Backend build (Spring Boot)
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-    - name: Build Spring Boot backend
-      run: mvn -B package --file backend/pom.xml
+      # Backend build (Spring Boot)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-    # Frontend build (React)
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-    - name: Install and build frontend
-      run: |
-        cd frontend
-        npm install
-        npm run build
+      - name: Build Spring Boot backend
+        run: mvn -B package --file backend/pom.xml
 
-    # Docker build
-    - name: Build Docker images
-      run: docker-compose build
+      # Frontend build (React)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install and build frontend
+        run: |
+          cd frontend
+          npm install
+          npm run build
+
+      # Docker build and push
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker-compose.yml
+          push: true
+          tags: gnaneswar1/my-fullstack-app:latest
